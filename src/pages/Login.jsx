@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,15 +19,16 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
-    // Add form submission logic here
+
     try {
       const response = await axios.post('http://localhost:5000/api/v1/login', {
         email: formData.email,
         password: formData.password,
       });
-        const accessToken = localStorage.setItem('access_token' , response.data.accessToken)
-        const refreshToken = localStorage.setItem('refresh_token' , response.data.refreshToken)
-      console.log('Response:', response.data); // Backend se response check karein
+      localStorage.setItem('access_token', response.data.accessToken)
+      localStorage.setItem('refresh_token', response.data.refreshToken)
+      console.log('Response:', response.data);
+      navigate("/home")
     } catch (error) {
       console.error('Error:', error.response ? error.response.data : error.message);
     }
@@ -36,7 +36,7 @@ const LoginPage = () => {
       email: "",
       password: "",
     });
-    navigate("/home")
+   
 
   };
 
@@ -77,7 +77,7 @@ const LoginPage = () => {
             type="submit"
             className="w-full px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
-            Login 
+            Login
           </button>
         </form>
         <div className="text-center mt-5">

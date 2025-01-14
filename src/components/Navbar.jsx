@@ -1,10 +1,21 @@
-import { Link } from "react-router-dom"
-import axiosInstance from "./axiosinstance"
-
-
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Navbar = () => {
 
+    const navigate = useNavigate();
+
+    const logOutUser = async () => {
+        try {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            await axios.post("http://localhost:5000/api/v1/logout");
+        } catch (error) {
+            console.log("Error logging out:", error.response.data);
+            
+        }
+        navigate("/");
+    };
 
     return (
         <>
@@ -14,18 +25,21 @@ const Navbar = () => {
                 </div>
                 <div className="flex-none">
                     <ul className="menu menu-horizontal px-1">
-                        <li><Link to="/home">Home</Link></li>
+                        {localStorage.getItem("access_token") ?<li><Link to="/home">Home</Link></li> : false }
+                        
                         <li><Link to="/register">Signup</Link></li>
-                        <li><Link to="/">Login</Link></li>
-                       
-
-
-
+                        <li>
+                            {localStorage.getItem('access_token') ? (
+                                <button onClick={logOutUser}>Logout</button>
+                            ) : (
+                                <Link to="/">Login</Link>
+                            )}
+                        </li>
                     </ul>
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default Navbar
+export default Navbar;

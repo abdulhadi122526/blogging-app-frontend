@@ -1,14 +1,17 @@
 import { TiLocationArrowOutline } from "react-icons/ti";
 import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../components/axiosinstance";
+import { useNavigate } from "react-router-dom";
 
 
 const Home = () => {
     const [data, setDate] = useState()
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const  commentInput = useRef()
+    const commentInput = useRef()
+    const navigate = useNavigate()
 
+    const token = localStorage.getItem("access_token")
 
     const getAllPosts = async () => {
         const response = await axiosInstance.get('/posts')
@@ -17,6 +20,7 @@ const Home = () => {
 
     }
     useEffect(() => {
+        if (!token) return alert("please login your account")
         getAllPosts()
     }, [])
 
@@ -25,15 +29,18 @@ const Home = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            if(!token) {
+                alert("please log in your account")
+                return
+            } 
             const response = await axiosInstance.post("/creatpost", {
                 title,
                 content,
-            },
-            )
+            })
             console.log(response.data);
         } catch (error) {
             console.log("creat post fiels ==>", error.response ? error.response.data : error.message);
-
+            
         }
         setTitle("");
         setContent("");
@@ -68,21 +75,21 @@ const Home = () => {
                 text: commentInput.current.value,
                 postId: id,
             },
-        )
-        console.log("comment submit", response.data);
-        getAllPosts();
+            )
+            console.log("comment submit", response.data);
+            getAllPosts();
         } catch (error) {
             console.log("like post error==>", error.message);
         }
-        
+
         commentInput.current.value = " "
     }
 
     return (
         <>
             <div className="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg mb-12 ">
-            <h2  className="text-xl font-bold text-gray-800 mb-4">Upload post</h2>
-                          
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Upload post</h2>
+
                 <form onSubmit={handleSubmit}>
                     {/* Title Field */}
                     <div className="mb-4">
@@ -148,8 +155,8 @@ const Home = () => {
                         {item.content}
                     </p>
                     <div className="mb-2 border p-5 rounded-lg">
-                    <h1 className="text-xl font-semibold ms-3 mb-2">Comments</h1>
-                        {item.comments.map((comments , index)=>{
+                        <h1 className="text-xl font-semibold ms-3 mb-2">Comments</h1>
+                        {item.comments.map((comments, index) => {
                             return <div key={index} className="mb-3 bg-gray-50 p-4 rounded-xl">
                                 <p className="font-semibold">{comments.user.username}</p>
                                 <p>{comments.text}</p>
@@ -159,7 +166,7 @@ const Home = () => {
                             e.preventDefault()
                             commentPost(item._id)
                         }} className="relative" >
-                            <input type="text" placeholder="Write a comment" name=""  id="" className="mt-1 input input-bordered w-full max-w-xsinput-md" ref={commentInput} />
+                            <input type="text" placeholder="Write a comment" name="" id="" className="mt-1 input input-bordered w-full max-w-xsinput-md" ref={commentInput} />
                             <button className="absolute start-[550px] top-4 text-2xl"> <TiLocationArrowOutline /> </button>
                         </form>
                     </div>
