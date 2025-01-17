@@ -19,9 +19,9 @@ const Navbar = () => {
 
     return (
         <>
-            <div className="navbar bg-blue-900 text-white flex mb-12 ">
+            <div className="navbar  bg-blue-900 text-white flex fixed top-0 z-10  ">
                 <div className="flex-1 ms-28">
-                    <a className="btn btn-ghost text-xl">daisyUI</a>
+                    <a className="btn btn-ghost text-xl">Social App</a>
                 </div>
                 <div className="flex-none">
                     <ul className="menu menu-horizontal px-1">

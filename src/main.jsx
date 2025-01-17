@@ -6,6 +6,7 @@ import Layout from './Layout'
 import RegisterPage from './pages/Register'
 import LoginPage from './pages/login'
 import Home from './pages/Home'
+import ProtectedRoute from './components/prtectedRout'
 
 
 
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
       },
       {
         path: "home",
-        element: <Home />
+        element: <ProtectedRoute component={<Home/>}/>
       },
 
     ]
