@@ -8,16 +8,17 @@ const ProtectedRoute = ({ component }) => {
   useEffect(() => {
     const checkToken = localStorage.getItem("access_token");
     if (checkToken) {
+
       setUser(true)
       return
     }
     navigate("/")
-  },[])
+  }, [])
 
 
   return (
     <>
-      {user && user ? component : <span className="loading loading-ring loading-lg"></span> }
+      {user && user ? component : <span className="loading loading-ring loading-lg"></span>}
     </>
   )
 }

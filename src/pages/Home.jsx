@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../components/axiosinstance";
 import { TiLocationArrowOutline } from "react-icons/ti";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { BiSolidLike } from "react-icons/bi";
+
 
 
 
@@ -10,7 +10,8 @@ const Home = () => {
     const [data, setDate] = useState()
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const commentInput = useRef()
+    // const commentInput = useRef()
+    const [commentInput, setCommentInput] = useState({})
 
 
     const token = localStorage.getItem("access_token")
@@ -59,7 +60,7 @@ const Home = () => {
                 postId: id,
             })
             console.log("liked post", response.data);
-            
+
         } catch (error) {
 
             console.log("post unlike", error.response?.data);
@@ -72,17 +73,20 @@ const Home = () => {
     const commentPost = async (id) => {
         try {
             const response = await axiosInstance.post('/comment', {
-                text: commentInput.current.value,
+                text: commentInput[id],
                 postId: id,
             },
             )
             console.log("comment submit", response.data);
             getAllPosts();
+            setCommentInput((prev) => ({
+                ...prev,
+                [id]: "", 
+            }));
         } catch (error) {
             console.log("comment post error==>", error.message);
         }
 
-        commentInput.current.value = " "
     }
 
 
@@ -101,7 +105,7 @@ const Home = () => {
 
     return (
         <>
-        {/* post uploading */}
+            {/* post uploading */}
             <div className="pt-24">
                 <div className="max-w-2xl mx-auto  bg-white p-6 rounded-lg shadow-lg mb-12  ">
                     <h2 className="text-xl font-bold text-gray-800 mb-4">Upload post</h2>
@@ -182,14 +186,18 @@ const Home = () => {
                                 e.preventDefault()
                                 commentPost(item._id)
                             }} className="relative" >
-                                <input type="text" placeholder="Write a comment" name="" id="" className="mt-1 input input-info input-bordered w-full max-w-xsinput-md" ref={commentInput} />
-                                <button className="absolute start-[550px] top-4 text-2xl"> <TiLocationArrowOutline /> </button>
+                                <input type="text" placeholder="Write a comment" value={commentInput[item._id] }  className="mt-1 input input-info input-bordered w-full max-w-xsinput-md" onChange={(e) =>  setCommentInput((prev) => ({
+                                            ...prev,
+                                            [item._id]: e.target.value,
+                                        }))} />
+                                <button className="absolute start-[550px] top-4 text-2xl"> <TiLocationArrowOutline className=" hover:text-blue-700 " /> </button>
                             </form>
                         </div>
 
 
                         <div className="flex items-center space-x-4 relative mt-5" >
-                            <div className="absolute end-2 text-sm">    <span>{item.comments.length} Comments</span>
+                            <div className="absolute end-2 text-sm">
+                                <span>{item.comments.length} Comments</span>
                                 <span className="ml-4">{item.like.length} Likes</span>
                             </div>
                             <button onClick={() => { likePost(item._id) }} className="flex items-center space-x-2 text-gray-600 hover:text-blue-500 transition">
