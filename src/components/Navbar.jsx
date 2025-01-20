@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import axiosInstance from "./axiosinstance";
+
 
 const Navbar = () => {
-
     const navigate = useNavigate();
 
     const logOutUser = async () => {
@@ -12,10 +13,26 @@ const Navbar = () => {
             await axios.post("http://localhost:5000/api/v1/logout");
         } catch (error) {
             console.log("Error logging out:", error.response.data);
-            
+
         }
         navigate("/");
     };
+   
+    // user details
+    const getUser = async () =>{
+        try {
+            const user = await axiosInstance.get('/user')
+            console.log(user.data);
+        } catch (error) {
+            console.log(error.message);
+            
+        }
+        
+    }
+    getUser()
+
+
+
 
     return (
         <>
@@ -25,8 +42,8 @@ const Navbar = () => {
                 </div>
                 <div className="flex-none">
                     <ul className="menu menu-horizontal px-1">
-                        {localStorage.getItem("access_token") ?<li><Link to="/home">Home</Link></li> : false }
-                        
+                        {localStorage.getItem("access_token") ? <li><Link to="/home">Home</Link></li> : false}
+
                         <li><Link to="/register">Signup</Link></li>
                         <li>
                             {localStorage.getItem('access_token') ? (

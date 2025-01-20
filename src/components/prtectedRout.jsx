@@ -8,7 +8,6 @@ const ProtectedRoute = ({ component }) => {
   useEffect(() => {
     const checkToken = localStorage.getItem("access_token");
     if (checkToken) {
-
       setUser(true)
       return
     }
